@@ -1,19 +1,30 @@
 #Nguyen Thanh Trung     20200422
+#Using python 3.7 environment
 import random, os, sys
 
-#Make sure that CHUNK_SIZE is bigger than size of every single line.
-#CHUNK_SIZE must not so big
+#Make sure that CHUNK_SIZE is much larger than size of every single line.
 CHUNK_SIZE = 5000 #bytes
 
+#Handle very large input file in reasonable time
 def get_random_line(file, length):
-    #Handle very big file input in reasonable time
-    offset = random.randint(0, length - CHUNK_SIZE)
+    offset = random.randint(0, length)
     file.seek(offset)
     chunk = file.read(CHUNK_SIZE)
     lines = chunk.splitlines()
+
+    #Get the 1st line case
     if offset == 0:
         return str(lines[0]).strip()
+
+    #Get the last line case
+    if len(lines) == 1:
+        file.seek(length - CHUNK_SIZE)
+        chunk = file.read(CHUNK_SIZE)
+        lines = chunk.splitlines()
+        return str(lines[-1]).strip()
+
     return str(lines[1]).strip()
+
 
 def get_random_line_small_file(file):
     #Storing whole file in memory approach
@@ -26,6 +37,7 @@ def get_random_line_small_file(file):
             continue
         line = aline
     return str(line).strip()
+
 
 def print_random_line(path):
     try:
@@ -41,6 +53,7 @@ def print_random_line(path):
                 print(get_random_line(file, length))
     except Exception as e:
         print("Error: ", str(e))
+
 
 if __name__ == "__main__":
     print_random_line(sys.argv[1])
